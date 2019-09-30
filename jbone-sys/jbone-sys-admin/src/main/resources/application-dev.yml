@@ -1,0 +1,110 @@
+#服务
+server:
+  port: 20002
+
+spring:
+  application:
+    name: jbone-sys-admin
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: jbone
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  thymeleaf:
+    cache: false
+    enabled: true
+  freemarker:
+    enabled: false
+  jpa:
+    show-sql: true
+
+  datasource:
+    username: root
+    password: opc@2018
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/jbone_sys?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=TRUE&useSSL=false
+
+
+  sleuth:
+    sampler:
+      probability: 1
+    messaging:
+      enabled: true
+      rabbit:
+        enabled: true
+  zipkin:
+    sender:
+       type: rabbit
+
+zipkin.rabbitmq.queue: zipkin
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10001/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude:
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+
+jbone:
+  cas:
+
+    casServerUrl: http://localhost:30001/cas
+    currentServerUrlPrefix: http://localhost:20002
+    casFilterUrlPattern: /cas
+    successUrl: http://localhost:20002/
+    unauthorizedUrl: /403
+    clientSessionTimeout: 1800000
+    filterChainDefinition:
+      "[/actuator/**]": anon
+      "[/**]": authc
+
+  sys:
+    serverName: jbone-sys-admin
+
+  rpc.sysServer.feign:
+    protocol: http
+    name: jbone-sys-server
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+  java:
+    version: ${java.version}
+  code:
+    git: https://github.com/417511458/jbone
+    gitee: https://gitee.com/majunwei2017/jbone
+  domain: http://www.jbone.cn
+
+
+hystrix.command.default.execution.timeout.enabled: true
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
+
+hystrix.command.default.execution.isolation.strategy: THREAD
+
+hystrix.threadpool.default.coreSize: 100
+
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout: true
+
+hystrix.command.default.execution.isolation.thread.interruptOnCancel: false

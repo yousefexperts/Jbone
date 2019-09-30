@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: jbone-bpm-server
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: jbone
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  thymeleaf:
+    cache: false
+    enabled: true
+  freemarker:
+    enabled: false
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/jbone_bpm?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=TRUE&useSSL=false
+    username: jbone_bpm
+    password: Jbone_bpm_666
+
+
+server:
+  port: 60001
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10001/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+management:
+  security:
+    enabled: false
+
+jbone:
+  sys:
+    serverName: jbone-bpm-server
+  rpc.sysServer.feign:
+    protocol: http
+    name: jbone-sys-server
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+  java:
+    version: ${java.version}
+  code:
+    git: https://github.com/417511458/jbone
+    gitee: https://gitee.com/majunwei2017/jbone
+  domain: http://www.jbone.cn
+

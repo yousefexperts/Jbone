@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: jbone-sm-gateway
+  redis:
+    host: 10.251.35.116
+    port: 6379
+    password: jboneonline
+
+  rabbitmq:
+    host: 10.251.35.116
+    port: 5672
+    username: admin
+    password: 123456
+
+  sleuth:
+    sampler:
+      probability: 1
+    messaging:
+      enabled: true
+      rabbit:
+        enabled: true
+  zipkin:
+    sender:
+      type: rabbit
+
+zipkin.rabbitmq.queue: zipkin
+
+
+
+server.port: 10005
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://10.251.35.116:10001/eureka,http://10.163.185.74:10001/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude:
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+
+zuul:
+  ignoredServices: '*'
+  routes:
+    jbone-sys-server: /system/**
+    jbone-cms-server: /cms/**
+    jbone-fs-server: /fs/**
+  sensitive-headers:
+
+
+ribbon:
+  ReadTimeout: 10000
+  SocketTimeout: 10000
+
+
+jbone:
+
+  sys:
+    serverName: jbone-sm-gateway
+
+    serverProtoal: http://
+
+  rpc.sysServer.feign:
+    protocol: http
+    name: jbone-sys-server
+
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+  java:
+    version: ${java.version}
+  code:
+    git: https://github.com/417511458/jbone
+    gitee: https://gitee.com/majunwei2017/jbone
+  domain: http://www.jbone.cn
+
+
+hystrix.command.default.execution.timeout.enabled: true
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
+
+hystrix.command.default.execution.isolation.strategy: THREAD
+
+hystrix.threadpool.default.coreSize: 100
+
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout: true
+
+hystrix.command.default.execution.isolation.thread.interruptOnCancel: false

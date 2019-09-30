@@ -1,0 +1,112 @@
+spring:
+  application:
+    name: jbone-sm-monitor
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: jbone
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  sleuth:
+    enabled: false
+
+
+  datasource:
+    schema: classpath:/zipkin.sql
+    url: jdbc:mysql://127.0.0.1:3306/jbone_zipkin?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: opc@2018
+    driver-class-name: com.mysql.jdbc.Driver
+    continue-on-error: true
+  zipkin:
+    sender:
+      type: rabbit
+
+zipkin:
+  storage:
+    type: mysql
+    StorageComponent: mysql
+
+
+server:
+  port: 10003
+
+turbine.stream.port: 10004
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10001/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude:
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+
+
+jbone:
+
+  cas:
+    casServerUrl: http://jbone-cas.majunwei.com:30001/cas
+
+    currentServerUrlPrefix: http://jbone-sm-monitor.majunwei.com:10003
+    casFilterUrlPattern: /cas
+    successUrl: /zipkin/
+    unauthorizedUrl: /403
+    filterChainDefinition:
+      "[/actuator/**]": anon
+      "[/zipkin/**]": authc,roles[serverAdministrator]
+      "[/**]": anon
+      "[/login]": anon
+    clientSessionTimeout: 1800000
+
+  sys:
+    serverName: jbone-sm-monitor
+    serverProtoal: http://
+
+  rpc.sysServer.feign:
+    protocol: http
+    name: jbone-sys-server
+
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+  java:
+    version: ${java.version}
+  code:
+    git: https://github.com/417511458/jbone
+    gitee: https://gitee.com/majunwei2017/jbone
+  domain: http://www.jbone.cn
+
+
+hystrix.command.default.execution.timeout.enabled: true
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
+
+hystrix.command.default.execution.isolation.strategy: THREAD
+
+hystrix.threadpool.default.coreSize: 100
+
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout: true
+
+hystrix.command.default.execution.isolation.thread.interruptOnCancel: false
